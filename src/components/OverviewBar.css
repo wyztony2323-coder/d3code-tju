@@ -1,0 +1,65 @@
+.overview-bar-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 160px;
+  background: rgba(10, 20, 30, 0.85);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 1000;
+  padding: 10px 20px;
+}
+
+.overview-bar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  color: #fff;
+  font-size: 12px;
+}
+
+.overview-title {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.overview-hint {
+  opacity: 0.6;
+  font-size: 11px;
+}
+
+.overview-svg {
+  width: 100%;
+  height: 120px;
+  pointer-events: none; /* 让SVG不阻挡滑块事件 */
+}
+
+.overview-svg .dot {
+  pointer-events: auto; /* 但数据点可以点击 */
+}
+
+/* 滑块样式 */
+.timeline-slider {
+  transition: left 0.1s ease-out;
+  touch-action: none; /* 防止触摸滚动干扰 */
+}
+
+.timeline-slider:active {
+  cursor: grabbing !important;
+}
+
+.timeline-slider:hover {
+  background: #d4a574 !important;
+  transform: translateX(-50%) scale(1.2);
+}
+
+.overview-svg .current-year-line {
+  pointer-events: none;
+}
+
+.overview-svg .dot:hover {
+  r: 5;
+  fill: #b2955a;
+}

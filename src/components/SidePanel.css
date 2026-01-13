@@ -1,0 +1,74 @@
+.side-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 40%;
+  max-width: 600px;
+  height: 100vh;
+  background: rgba(10, 20, 30, 0.95);
+  backdrop-filter: blur(15px);
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  z-index: 3000; /* 提高层级，确保在 FilterBar 和 OverviewBar 之上，但低于 ScrollModal */
+  display: flex;
+  flex-direction: column;
+  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.5);
+  animation: slideInRight 0.3s ease-out;
+  pointer-events: auto; /* 确保可以接收点击事件 */
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.side-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.side-panel-title {
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.side-panel-close {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 32px;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s;
+  z-index: 3001; /* 确保关闭按钮在最上层 */
+  position: relative;
+  pointer-events: auto; /* 确保可以点击 */
+}
+
+.side-panel-close:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.side-panel-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* 当侧边面板打开时，3D视图需要缩小 */
+.tju-viewport.side-panel-open {
+  margin-right: 40%;
+  transition: margin-right 0.3s ease-out;
+}

@@ -23,14 +23,19 @@
     "@ant-design/pro-layout": "^6.5.0",
     "@react-three/drei": "7.22.0",
     "@react-three/fiber": "7.0.29",
+    "@reduxjs/toolkit": "^2.11.2",
     "@types/d3": "^7.4.3",
+    "@types/react-redux": "^7.1.33",
     "antd": "4",
     "d3": "^7.9.0",
     "react": "17.x",
     "react-dom": "17.x",
+    "react-redux": "^7.2.9",
+    "redux": "^5.0.1",
     "three": "0.133.0",
     "three-stdlib": "^2.36.1",
-    "umi": "^3.5.43"
+    "umi": "^3.5.43",
+    "use-sync-external-store": "^1.6.0"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",
