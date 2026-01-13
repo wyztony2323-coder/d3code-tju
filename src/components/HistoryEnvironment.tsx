@@ -1,4 +1,4 @@
-import React, { useRef, useMemo } from 'react';
+import React, { useRef, useMemo, memo } from 'react';
 import { Canvas, useFrame, extend, useThree } from '@react-three/fiber';
 import { Sky, Stars } from '@react-three/drei';
 import * as THREE from 'three';
@@ -91,23 +91,30 @@ interface EnvProps {
 }
 
 const HistoryEnvironment: React.FC<EnvProps> = ({ scrollZ }) => {
-  // 摄像机控制组件
+  // 摄像机控制组件（性能优化：减少不必要的更新）
   const CameraController = () => {
     const { camera } = useThree();
+    const lastZRef = useRef(0);
+    
     useFrame(() => {
       // z 轴跟随滚动
       const targetZ = scrollZ * 0.8; // 调整倍率以匹配 CSS 滚动速度
       
-      // 平滑插值移动 (Lerp) 显得更有电影感
-      camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.1);
-      
-      // 关键：固定 y 高度 (120) 和 x 位置 (0)，防止跑偏
-      camera.position.y = 120;
-      camera.position.x = 0;
+      // 只有当变化超过阈值时才更新（减少计算）
+      if (Math.abs(camera.position.z - targetZ) > 1) {
+        // 平滑插值移动 (Lerp) 显得更有电影感
+        camera.position.z = THREE.MathUtils.lerp(camera.position.z, targetZ, 0.1);
+        
+        // 关键：固定 y 高度 (120) 和 x 位置 (0)，防止跑偏
+        camera.position.y = 120;
+        camera.position.x = 0;
 
-      // 永远看向正前方地平线 (targetZ + 远处)
-      // 保持目光平视，才能看到水面延伸到地平线
-      camera.lookAt(0, 0, targetZ + 3000);
+        // 永远看向正前方地平线 (targetZ + 远处)
+        // 保持目光平视，才能看到水面延伸到地平线
+        camera.lookAt(0, 0, targetZ + 3000);
+        
+        lastZRef.current = camera.position.z;
+      }
     });
     return null;
   };
@@ -139,8 +146,8 @@ const HistoryEnvironment: React.FC<EnvProps> = ({ scrollZ }) => {
         {/* 1. 水面组件 */}
         <Ocean />
         
-        {/* 2. 将星星半径设大，包裹整个世界 */}
-        <Stars radius={5000} depth={200} count={6000} factor={8} saturation={0} fade />
+        {/* 2. 将星星半径设大，包裹整个世界（性能优化：减少数量） */}
+        <Stars radius={5000} depth={200} count={2000} factor={8} saturation={0} fade />
         
         {/* 3. 调整 Sky 让它在极远处 */}
         <Sky 
@@ -161,4 +168,4 @@ const HistoryEnvironment: React.FC<EnvProps> = ({ scrollZ }) => {
   );
 };
 
-export default HistoryEnvironment;
+export default memo(HistoryEnvironment);

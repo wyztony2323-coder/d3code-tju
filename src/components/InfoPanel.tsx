@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, memo } from 'react';
 import * as d3 from 'd3';
 // 注意：我们要支持“动态数据”，所以接口里的值类型要宽松一点（不仅是Majors，还得允许临时计算的数据）
 import { HistoryEvent, MajorItem } from '@/data/uni_detail';
@@ -111,4 +111,4 @@ const InfoPanel: React.FC<Props> = ({ data }) => {
   );
 };
 
-export default InfoPanel;
+export default memo(InfoPanel);

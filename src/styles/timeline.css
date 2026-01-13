@@ -59,6 +59,8 @@
   width: 0;
   height: 0;
   transform-style: preserve-3d;
+  /* 性能优化：提示浏览器优化transform */
+  will-change: transform;
 }
 
 /* 
@@ -78,6 +80,10 @@
   overflow: visible;
   /* 统一坐标原点：所有子元素的 transform-origin 都相对于这个点 */
   transform-origin: 50% 50% 0;
+  /* 性能优化：提示浏览器优化transform */
+  will-change: transform;
+  /* 性能优化：使用GPU加速 */
+  transform: translateZ(0);
 }
 
 /* =========================================
@@ -107,6 +113,8 @@
   z-index: 5;
   transform: translateZ(2px); /* 稍微浮起一点防闪烁 */
   transform-style: preserve-3d;
+  /* 性能优化 */
+  will-change: transform;
 }
 
 /* 发光的横线 */
@@ -193,6 +201,8 @@
   position: relative;
   transform: translateZ(2px);
   /* 让它看起来有机械感 */
+  /* 性能优化 */
+  will-change: transform;
 }
 
 /* 连接点圆点装饰 */
@@ -235,6 +245,8 @@
   /* 倾斜放置：60度比较好，既能看清水面，字又容易认 */
   /* translateY 控制垂直高度：负值向上，正值向下。减小负值让浮岛更靠近道路 */
   transform: translateZ(50px) translateY(-20px) rotateX(60deg);
+  /* 性能优化 */
+  will-change: transform;
   
   /* 加上光晕内描边 */
   box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
@@ -344,6 +356,8 @@
   */
   transform-origin: 50% 50% 0;
   transform: rotateX(90deg) translateZ(-300px);
+  /* 性能优化 */
+  will-change: transform;
 
   /* 颜色：天大蓝 + 渐变 */
   background: linear-gradient(to bottom, 

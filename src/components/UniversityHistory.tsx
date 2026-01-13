@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useMemo, useCallback } from 'react';
 import '@/styles/timeline.css'; 
 import { uniDetailData, HistoryEvent } from '@/data/uni_detail';
 import InfoPanel from './InfoPanel';
@@ -107,45 +107,72 @@ const UniversityHistory: React.FC<UniversityHistoryProps> = ({ onScrollChange })
     };
   }, [scrollZ]);
 
-  // ================= 滚轮事件 =================
+  // ================= 滚轮事件（性能优化：使用 requestAnimationFrame 节流）=================
+  const rafRef = useRef<number | null>(null);
+  const pendingDeltaRef = useRef<number>(0);
+  
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
-      const delta = e.deltaY * SCROLL_SPEED;
+      pendingDeltaRef.current += e.deltaY * SCROLL_SPEED;
       
-      setScrollZ(prev => {
-        const nextZ = prev + delta;
-        const maxZ = ROAD_DATA.length * Z_STEP; 
-        const clampedZ = Math.max(-1000, Math.min(nextZ, maxZ));
-        
-        // 通知父组件滚动位置变化
-        if (onScrollChange) {
-          onScrollChange(clampedZ);
-        }
-        
-        return clampedZ;
-      });
+      // 如果已经有待处理的帧，不重复请求
+      if (rafRef.current === null) {
+        rafRef.current = requestAnimationFrame(() => {
+          const delta = pendingDeltaRef.current;
+          pendingDeltaRef.current = 0;
+          rafRef.current = null;
+          
+          setScrollZ(prev => {
+            const nextZ = prev + delta;
+            const maxZ = ROAD_DATA.length * Z_STEP; 
+            const clampedZ = Math.max(-1000, Math.min(nextZ, maxZ));
+            
+            // 通知父组件滚动位置变化
+            if (onScrollChange) {
+              onScrollChange(clampedZ);
+            }
+            
+            return clampedZ;
+          });
+        });
+      }
     };
+    
     window.addEventListener('wheel', handleWheel, { passive: false });
-    return () => window.removeEventListener('wheel', handleWheel);
+    return () => {
+      window.removeEventListener('wheel', handleWheel);
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
   }, [onScrollChange]);
 
-  // ================= 左右模块点击处理 =================
-  const handleLeftClick = (year: number) => {
+  // ================= 虚拟滚动：只渲染可见区域 =================
+  const VISIBLE_RANGE = 3; // 前后各渲染3个模块
+  const visibleIndices = useMemo(() => {
+    const currentIndex = Math.floor(scrollZ / Z_STEP);
+    const start = Math.max(0, currentIndex - VISIBLE_RANGE);
+    const end = Math.min(ROAD_DATA.length - 1, currentIndex + VISIBLE_RANGE);
+    return Array.from({ length: end - start + 1 }, (_, i) => start + i);
+  }, [scrollZ]);
+
+  // ================= 左右模块点击处理（使用 useCallback 优化）=================
+  const handleLeftClick = useCallback((year: number) => {
     const buildingData = getCampusData(year);
     if (buildingData) {
       setSelectedCampusData(buildingData);
       setShowBuilding(true);
     }
-  };
+  }, []);
 
-  const handleRightClick = (year: number) => {
+  const handleRightClick = useCallback((year: number) => {
     const alumniData = getAlumniData(year);
     if (alumniData) {
       setSelectedAlumniData(alumniData);
       setShowAlumni(true);
     }
-  };
+  }, []);
 
   return (
     <div className="tju-viewport">
@@ -162,10 +189,14 @@ const UniversityHistory: React.FC<UniversityHistoryProps> = ({ onScrollChange })
         <div 
           className="world-group" 
           ref={worldRef}
-          style={{ transform: `translateZ(${scrollZ - INITIAL_Z}px)` }}
+          style={{ 
+            // 性能优化：使用 translate3d 触发 GPU 加速
+            transform: `translate3d(0, 0, ${scrollZ - INITIAL_Z}px)`
+          }}
         >
           {/* @ts-ignore */}
-          {ROAD_DATA.map((item, index) => {
+          {visibleIndices.map((index) => {
+            const item = ROAD_DATA[index];
             const zPos = -1 * index * Z_STEP;
             // @ts-ignore
             const isFiller = item.isEmpty; 
