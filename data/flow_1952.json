@@ -1,0 +1,21 @@
+{
+    "nodes": [
+      { "name": "北洋大学", "id": 0 },
+      { "name": "南开大学工学院", "id": 1 },
+      { "name": "津沽大学工学院", "id": 2 },
+      { "name": "清华大学", "id": 3 },
+      { "name": "北京航空学院", "id": 4 },
+      { "name": "北京地质学院", "id": 5 },
+      { "name": "北京钢铁学院", "id": 6 },
+      { "name": "天津大学 (新)", "id": 7 }
+    ],
+    "links": [
+      { "source": 0, "target": 7, "value": 50, "desc": "工科主体保留" },
+      { "source": 1, "target": 7, "value": 30, "desc": "机械、化工等系并入" },
+      { "source": 2, "target": 7, "value": 20, "desc": "土木、建筑系并入" },
+      { "source": 0, "target": 3, "value": 10, "desc": "数学系抽调至清华" },
+      { "source": 0, "target": 4, "value": 15, "desc": "航空系抽调组建北航" },
+      { "source": 0, "target": 5, "value": 15, "desc": "地质组抽调组建地质学院" },
+      { "source": 0, "target": 6, "value": 10, "desc": "采矿冶金系抽调组建钢院" }
+    ]
+  }

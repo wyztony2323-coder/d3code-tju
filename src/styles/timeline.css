@@ -1,0 +1,1315 @@
+/* src/styles/timeline.css */
+
+/* =========================================
+   1. 基础视窗
+   ========================================= */
+.tju-viewport {
+  width: 100vw;
+  height: 100vh;
+  /* 背景透明，漏出底下的 Three.js Canvas */
+  background: transparent !important; 
+  overflow: hidden;
+  position: relative;
+}
+
+/* =========================================
+   主标题：屏幕正中央上方
+   ========================================= */
+.main-title {
+  position: fixed;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 3000; /* 确保在最上层 */
+  text-align: center;
+  pointer-events: none; /* 不阻挡交互 */
+}
+
+.title-text {
+  font-family: 'Noto Serif SC', 'SimSun', serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 
+    0 2px 10px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(0, 68, 138, 0.5);
+  letter-spacing: 4px;
+  margin: 0;
+  padding: 0;
+  white-space: nowrap;
+  /* 毛玻璃效果 */
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(8px);
+  padding: 12px 40px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.scene-3d {
+  width: 100%;
+  height: 100%;
+  perspective: 1200px;
+  perspective-origin: 50% 30%; /* 视角抬高 */
+}
+
+.world-group {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  transform-style: preserve-3d;
+}
+
+/* 
+   2. 模块容器 (每一年的数据包裹)
+   关键：路和文字都在这个容器里，生死与共
+   统一坐标系统：所有子元素都相对于这个容器的中心点定位
+*/
+.year-module-group {
+  position: absolute;
+  left: 60%;
+  top: 0;
+  transform-style: preserve-3d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* 确保 overflow 不是 hidden，允许子元素超出（用于堤岸延伸） */
+  overflow: visible;
+  /* 统一坐标原点：所有子元素的 transform-origin 都相对于这个点 */
+  transform-origin: 50% 50% 0;
+}
+
+/* =========================================
+   3. 道路切片 (Road Tile) 
+   ========================================= */
+:root {
+  --road-width: 1000px; /* 道路宽度，统一管理 */
+  --bank-width: 80px;   /* 堤岸宽度 */
+  --bank-offset: -80px; /* 堤岸对齐偏移量，修正整体向右偏移的问题 */
+}
+
+/* =========================================
+   ✨ NEW: 结构化 UI/HUD 风格系统
+   道路刻度线 → 连接光束 → 独立浮岛面板
+   ========================================= */
+
+/* ====== 1. 中央刻度系统 (Timeline Tick) ====== */
+.timeline-tick-bar {
+  position: absolute;
+  top: 50%;
+  left: -200px; /* 超出路面一点 */
+  right: -200px;
+  height: 2px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+  transform: translateZ(2px); /* 稍微浮起一点防闪烁 */
+  transform-style: preserve-3d;
+}
+
+/* 发光的横线 */
+.tick-line {
+  width: 100%;
+  height: 2px;
+  /* 中间实，两头虚的渐变线条 */
+  background: linear-gradient(
+    90deg, 
+    transparent 0%, 
+    rgba(255, 215, 0, 0.2) 20%, 
+    rgba(255, 215, 0, 1) 50%, 
+    rgba(24, 144, 255, 0.2) 80%,
+    transparent 100%
+  );
+  box-shadow: 0 0 8px rgba(255, 215, 0, 0.6);
+  filter: url(#glow-filter);
+}
+
+/* 巨大的年份数字，压在刻度线上 */
+.year-label {
+  position: absolute;
+  top: -40px; /* 立起来或者浮在上面 */
+  font-family: 'Times New Roman', serif;
+  font-size: 80px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.15); /* 很淡的背景字 */
+  text-shadow: 0 0 20px rgba(0,0,0,0.5);
+  /* 修复镜像问题：先翻转回来，再旋转 */
+  transform: scaleX(-1) rotateX() translateZ(10px); /* 躺平，但文字不镜像 */
+  white-space: nowrap;
+  pointer-events: none;
+  z-index: 6;
+  /* 确保文字正确显示 */
+  backface-visibility: visible;
+}
+
+/* 中央路面内容 */
+.road-surface-content {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateZ(5px);
+  z-index: 4;
+}
+
+.event-text {
+  font-size: 16px;
+  color: #fff;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+  transform: translateY(20px); /* 在年份下方显示事件 */
+  letter-spacing: 2px;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ====== 2. 两侧系统容器 (System) ====== */
+/* 用来定位浮岛和连接杆 */
+.side-system {
+  position: absolute;
+  top: 50%;
+  display: flex;
+  align-items: center;
+  transform-style: preserve-3d;
+  z-index: 10;
+}
+
+.left-system {
+  right: 150%; /* 从路中心(50%)向左偏移 */
+  flex-direction: row-reverse; /* 浮岛 - 连接杆 */
+}
+
+.right-system {
+  left: 150%; /* 从路中心向右偏移 */
+  flex-direction: row; /* 连接杆 - 浮岛 */
+}
+
+/* ====== 3. 强力连接光束 (Connection Beam) ====== */
+.connection-beam {
+  width: 150px; /* 连接杆长度 */
+  height: 2px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  position: relative;
+  transform: translateZ(2px);
+  /* 让它看起来有机械感 */
+}
+
+/* 连接点圆点装饰 */
+.connection-beam::after {
+  content: '';
+  position: absolute;
+  width: 6px; 
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  top: -2px;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+}
+
+.left-system .connection-beam::after { 
+  left: 0; 
+}
+
+.right-system .connection-beam::after { 
+  right: 0; 
+}
+
+/* ====== 4. 清晰独立浮岛 (Crystal Island) ====== */
+.info-island {
+  position: relative;
+  width: 220px;
+  height: 100px;
+  margin: 0 10px; /* 与连接杆的距离 */
+  
+  /* 关键：磨砂玻璃风格，提升清晰度 */
+  background: rgba(10, 20, 30, 0.7); 
+  backdrop-filter: blur(10px); /* 模糊背后的 3D 水面，确保文字清晰 */
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px; /* 标准 UI 圆角，不要 random */
+  
+  cursor: pointer;
+  transition: all 0.3s ease;
+  transform-style: preserve-3d;
+  
+  /* 倾斜放置：60度比较好，既能看清水面，字又容易认 */
+  /* translateY 控制垂直高度：负值向上，正值向下。减小负值让浮岛更靠近道路 */
+  transform: translateZ(50px) translateY(-20px) rotateX(60deg);
+  
+  /* 加上光晕内描边 */
+  box-shadow: inset 0 0 20px rgba(255,255,255,0.05);
+}
+
+/* 不同主题的配色差异 */
+.island-history {
+  border-left: 4px solid #d4b106; /* 金色边框 */
+}
+
+.island-history:hover {
+  background: rgba(40, 35, 10, 0.8);
+  box-shadow: 0 0 30px rgba(212, 177, 6, 0.4);
+  transform: translateZ(50px) translateY(-20px) rotateX(50deg) translateZ(10px) scale(1.05); /* 悬浮互动 */
+}
+
+.island-alumni {
+  border-right: 4px solid #1890ff; /* 蓝色边框 */
+}
+
+.island-alumni:hover {
+  background: rgba(10, 35, 50, 0.8);
+  box-shadow: 0 0 30px rgba(24, 144, 255, 0.4);
+  transform: translateZ(50px) translateY(-20px) rotateX(50deg) translateZ(10px) scale(1.05);
+}
+
+/* 内容排版 */
+.island-inner {
+  height: 100%;
+  
+  display: flex;
+  align-items: center;
+  padding: 0 15px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  /* 关键：反向旋转，让内容正对屏幕 */
+  transform: rotateX(-60deg);
+  transform-style: preserve-3d;
+}
+
+.right-system .island-inner {
+  flex-direction: row-reverse;
+  text-align: right;
+}
+
+.island-icon {
+  font-size: 32px;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,0.5));
+  line-height: 1;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.island-info {
+  margin: 0 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.island-title {
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  line-height: 1.2;
+}
+
+.island-sub {
+  color: rgba(255,255,255,0.6);
+  font-size: 10px;
+  text-transform: uppercase;
+  margin-top: 2px;
+  letter-spacing: 0.5px;
+}
+
+/* 装饰：倒影/光底座 */
+.island-reflection {
+  position: absolute;
+  top: 100%; 
+  left: 10%; 
+  right: 10%;
+  height: 20px;
+  background: radial-gradient(ellipse at center, rgba(255,255,255,0.4) 0%, transparent 70%);
+  filter: blur(8px);
+  transform: rotateX(0deg); /* 投影在平面上 */
+  opacity: 0.6;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.road-tile {
+  position: absolute;
+  /* 宽度 */
+  width: var(--road-width);
+  /* 居中定位：使用 left: 50% 和负边距来居中 */
+  left: 50%;
+  margin-left: calc(var(--road-width) / -2); /* 向左偏移自身宽度的一半，实现居中 */
+  /* 确保作为定位上下文，让子元素（堤岸）可以相对于它定位 */
+  
+  /* 
+     统一坐标系统：
+     - 所有元素都使用相同的 transform-origin: 50% 50% 0（相对于 year-module-group 的中心）
+     - rotateX(90deg): 倒下放平
+     - translateZ(-300px): 向下推300px (作为地板)
+  */
+  transform-origin: 50% 50% 0;
+  transform: rotateX(90deg) translateZ(-300px);
+
+  /* 颜色：天大蓝 + 渐变 */
+  background: linear-gradient(to bottom, 
+     rgba(0, 68, 138, 0.05) 0%, 
+     rgba(0, 68, 138, 0.15) 50%, 
+     rgba(0, 68, 138, 0.05) 100%
+  );
+  
+  /* 边框确保可见 */
+  border-left: 2px solid rgba(0, 68, 138, 0.4);
+  border-right: 2px solid rgba(0, 68, 138, 0.4);
+
+  pointer-events: none; /* 防止遮挡 */
+}
+
+/* 道路中线 */
+.road-tile::after {
+  content: '';
+  position: absolute; top: 0; left: 50%;
+  width: 2px; height: 100%;
+  background: rgba(0, 68, 138, 0.3);
+}
+
+/* =========================================
+   4. 年份文字与线条
+   ========================================= */
+.year-text-group {
+  position: absolute;
+  /* 与道路使用完全相同的定位方式：直接居中 */
+  left: 50%;
+  margin-left: calc(var(--road-width) / -2); /* 与道路使用相同的定位 */
+  /* 文字容器宽度与道路相同，这样 text-align: center 就能让文字居中 */
+  width: var(--road-width);
+  /* 统一坐标系统：使用相同的 transform-origin */
+  transform-origin: 50% 50% 0;
+  /* 通过 transform 向上抬起，文字已经在道路中心（因为容器宽度和定位与道路相同） */
+  transform: translateZ(50px);
+  transform-style: preserve-3d;
+  /* 文字在道路中心上方 */
+  text-align: center;
+}
+
+
+.year-number {
+  font-family: 'Times New Roman', serif;
+  font-size: 80px;
+  font-weight: 700;
+  color: rgba(0, 68, 138, 0.25);
+  margin-top: 0;
+  user-select: none;
+}
+
+
+
+
+/* =========================================
+   1. 基础视窗 (保持不变)
+   ========================================= */
+.tju-viewport {
+  width: 100vw;
+  height: 100vh;
+  background: #fdfaf5; 
+  background-image: linear-gradient(180deg, #ffffff 0%, #f4f0e6 100%);
+  overflow: hidden;
+  position: relative;
+  /* 确保 UI 元素都在 3D 场景之上 */
+  z-index: 1; 
+}
+
+/* =========================================
+   2. 3D 场景与道路 (保持不变)
+   ========================================= */
+.scene-3d {
+  width: 100%;
+  height: 100%;
+  perspective: 1200px;
+  perspective-origin: 50% 30%;
+  /* 3D 场景层级设低 */
+  z-index: 0;
+}
+
+.world-group {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 0; height: 0;
+  transform-style: preserve-3d;
+}
+
+.year-module-group {
+  position: absolute;
+  left: 60%; top: 0;
+  transform-style: preserve-3d;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.road-tile {
+  position: absolute;
+  width: 1000px;
+  transform-origin: 50% 50%;
+  transform: rotateX(90deg) translateZ(-270px); /* 比水面高30px，制造悬浮感 */
+  background: linear-gradient(to bottom, 
+     rgba(0, 68, 138, 0.05) 0%, 
+     rgba(0, 68, 138, 0.15) 50%, 
+     rgba(0, 68, 138, 0.05) 100%
+  );
+  border-left: 2px solid rgba(0, 68, 138, 0.4);
+  border-right: 2px solid rgba(0, 68, 138, 0.4);
+  pointer-events: none;
+  /* 添加阴影，增强悬浮感 */
+  box-shadow: 0 0 30px rgba(0, 68, 138, 0.2);
+}
+.road-tile::after {
+  content: '';
+  position: absolute; top: 0; left: 50%;
+  width: 2px; height: 100%;
+  background: rgba(0, 68, 138, 0.3);
+}
+
+.year-text-group {
+  position: absolute;
+  transform-style: preserve-3d;
+  transform: translateZ(50px); /* 比道路更高，确保在水面之上 */
+}
+
+.year-number {
+  font-family: 'Times New Roman', serif;
+  font-size: 80px;
+  font-weight: 700;
+  color: rgba(0, 68, 138, 0.25);
+  margin-top: 0;
+  user-select: none;
+}
+
+/* =========================================
+   ✨ NEW: 左上角固定面板 (替代原 3D Card)
+   ========================================= */
+.fixed-left-panel {
+  position: fixed;
+  top: 40px; 
+  left: 40px; 
+  width: 340px; /* 宽度适中 */
+  
+  /* 毛玻璃 + 拟态风格 */
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  
+  /* 边框设计 */
+  border: 1px solid #c2d1e8;
+  border-top: 6px solid #00448a; /* 顶部强调色 */
+  border-bottom: 2px solid #b2955a; /* 底部强调色 */
+  border-radius: 6px;
+  
+  padding: 25px;
+  
+  /* 阴影让它浮起来 */
+  box-shadow: 0 10px 40px rgba(0, 44, 138, 0.15);
+  
+  z-index: 2000;
+  font-family: 'Noto Serif SC', serif;
+  
+  /* 平滑过渡动画 */
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fixed-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 15px;
+  border-bottom: 1px dashed rgba(0,0,0,0.1);
+  padding-bottom: 10px;
+}
+
+.fixed-title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  color: #00448a;
+  line-height: 1.3;
+  width: 75%;
+}
+
+.fixed-year {
+  font-family: 'Times New Roman', serif;
+  font-size: 24px;
+  font-weight: bold;
+  color: #e0d0b0; /* 淡淡的年份水印色 */
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  opacity: 0.8;
+}
+
+.fixed-desc {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #555;
+  text-align: justify;
+  margin-bottom: 20px;
+  min-height: 80px; /* 预留高度防止文字跳变 */
+}
+
+/* 阅读按钮 */
+.read-more-btn {
+  width: 100%;
+  padding: 8px 0;
+  background: transparent;
+  color: #b2955a;
+  border: 1px solid #b2955a;
+  border-radius: 4px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: 'Noto Serif SC';
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.read-more-btn:hover {
+  background: #b2955a;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(178, 149, 90, 0.3);
+}
+
+/* 之前右侧的面板保持不动 */
+.info-panel {
+  position: fixed;
+  top: 40px; right: 40px; /* 稍微对其一点 */
+  /* 其他保持你之前的样式... */
+}
+
+
+/* =========================================
+   5. 修复卡片跳动的套娃结构
+   ========================================= */
+
+/* 外层：负责位置定位 (JS 控制) */
+.card-wrapper {
+  position: absolute;
+  width: 280px;
+  display: flex;
+  justify-content: center;
+  /* 允许鼠标穿透 wrapper 去点击里面的 card */
+  pointer-events: none; 
+  transform-style: preserve-3d;
+}
+
+/* 内层：负责视觉和 Hover 动画 (CSS 控制) */
+.event-card {
+  width: 100%;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid #9fbce4;
+  border-top: 4px solid #00448a;
+  border-radius: 4px;
+  
+  /* 必须开启交互 */
+  pointer-events: auto !important;
+  cursor: pointer;
+  
+  /* 背面隐藏 */
+  backface-visibility: hidden;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Hover 时原地放大，不会跑偏 */
+.event-card:hover {
+  transform: scale(1.1) translateY(-10px);
+  box-shadow: 0 15px 40px rgba(0, 68, 138, 0.3);
+  z-index: 999;
+  background: #fff;
+}
+
+.event-card h3 { margin: 0 0 5px 0; color: #00448a; font-size: 18px; }
+.event-card p { margin: 0; font-size: 12px; color: #555; }
+.event-card small { display: block; margin-top: 8px; color: #b2955a; font-size: 10px; }
+
+
+/* =========================================
+   6. 右上角面板 UI
+   ========================================= */
+/* src/styles/timeline.css 中的 .info-panel 部分 */
+
+.info-panel {
+  position: fixed;
+  top: 30px; 
+  right: 30px;
+  width: 280px; /* 稍微窄一点精致 */
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid #00448a;
+  border-top: 4px solid #b2955a; /* 换个顶色区别一下 */
+  border-radius: 8px;
+  padding: 15px;
+  box-shadow: 0 10px 40px rgba(0, 68, 138, 0.2);
+  z-index: 2000;
+  
+  font-family: 'Noto Serif SC', serif;
+  
+  /* 
+     🔥 关键修改：取消位移 transform: translateX(...)
+     让它永远固定在右上角
+  */
+  transform: none !important; 
+  opacity: 1;
+}
+
+/* 加上一个状态类 */
+.info-panel.active-persistent {
+  /* 可以在这里加个呼吸灯阴影效果 */
+  box-shadow: 0 10px 40px rgba(0, 68, 138, 0.3);
+}
+
+.panel-header {
+  border-bottom: 1px dashed #ccc;
+  padding-bottom: 5px;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.panel-header h2 { font-size: 16px; margin: 0; color: #333; }
+.panel-header small { color: #b2955a; font-size: 10px; font-weight: bold; }
+
+.legend-item { font-size: 11px; margin-bottom: 2px; }
+
+/* 删掉之前的 close-btn 相关样式，不再需要关闭 */
+.info-panel.active { transform: translateX(0); }
+
+
+
+
+
+
+
+
+
+
+
+
+/* =======================================================
+   📜 核心新增：中央书卷 (Scroll Modal) 样式
+   ======================================================= */
+
+/* 1. 遮罩层 (毛玻璃背景) */
+.scroll-overlay {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 44, 88, 0.6); /* 深蓝半透明 */
+  backdrop-filter: blur(8px);
+  z-index: 99999; /* 最高层级 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+}
+
+.scroll-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* 2. 书卷主体 (仿宣纸) */
+.scroll-paper {
+  position: relative;
+  width: 0; /* 动画初始宽度 */
+  height: 80vh;
+  background: #fdfaf5; /* 宣纸色 */
+  /* 添加纸张噪点纹理 */
+  background-image: 
+    linear-gradient(to right, rgba(0,0,0,0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, #fdfaf5 0%, #f4ebd4 100%); 
+  background-size: 100% 100%;
+  box-shadow: 0 0 50px rgba(0,0,0,0.5);
+  display: flex;
+  transition: width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  overflow: hidden;
+}
+/* 展开后的宽度 */
+.scroll-overlay.show .scroll-paper {
+  width: 900px;
+  max-width: 90vw;
+}
+
+/* 3. 卷轴圆轴 (左右两边的木棍) */
+.scroll-roller {
+  width: 40px;
+  height: 100%;
+  flex-shrink: 0;
+  /* 木纹质感 */
+  background: linear-gradient(to right, 
+    #5e3c23 0%, #8a5a3a 40%, #5e3c23 60%, #3d2312 100%);
+  border: 1px solid #2b160a;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  position: relative;
+  z-index: 2;
+}
+.left-roller { border-radius: 5px 0 0 5px; }
+.right-roller { border-radius: 0 5px 5px 0; }
+
+/* 装饰性轴头 */
+.scroll-roller::before, .scroll-roller::after {
+  content: ''; position: absolute; left: 50%;
+  width: 120%; height: 20px;
+  margin-left: -60%;
+  background: #b2955a; /* 金头 */
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+}
+.scroll-roller::before { top: -10px; }
+.scroll-roller::after { bottom: -10px; }
+
+/* 4. 内容容器 */
+.scroll-content-container {
+  flex: 1;
+  padding: 60px 80px;
+  position: relative;
+  overflow-y: auto; /* 内容太长可滚动 */
+  color: #333;
+  font-family: "SimSun", "Songti SC", serif; /* 宋体 */
+  opacity: 0;
+  transition: opacity 0.5s 0.6s; /* 等卷轴展开后再显示文字 */
+}
+.scroll-overlay.show .scroll-content-container {
+  opacity: 1;
+}
+
+/* 巨大的背景水印 */
+.scroll-watermark {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 400px;
+  font-family: 'Times New Roman', serif;
+  color: rgba(0, 68, 138, 0.05); /* 极淡的天大蓝 */
+  pointer-events: none;
+  font-weight: bold;
+}
+
+/* 头部 */
+.scroll-header { text-align: center; margin-bottom: 20px; }
+.scroll-year { display: block; font-size: 24px; color: #b2955a; font-family: 'Times New Roman'; margin-bottom: 10px; letter-spacing: 2px; }
+.scroll-title { font-size: 42px; color: #00448a; margin: 0; font-weight: bold; }
+
+/* 分隔符 */
+.scroll-divider { text-align: center; margin: 30px 0; opacity: 0.5; color: #b2955a; }
+.divider-icon { font-size: 20px; position: relative; }
+.divider-icon::before, .divider-icon::after {
+  content: ''; position: absolute; top: 50%; 
+  width: 100px; height: 1px; background: #b2955a;
+}
+.divider-icon::before { right: 30px; }
+.divider-icon::after { left: 30px; }
+
+/* 正文 */
+.scroll-text {
+  font-size: 18px;
+  line-height: 2.2; /* 宽松的行距，便于阅读 */
+  text-indent: 2em;
+  text-align: justify;
+}
+.scroll-text strong { color: #00448a; font-size: 20px; }
+.summary { color: #666; font-style: italic; background: rgba(0,0,0,0.03); padding: 10px; border-radius: 5px;}
+
+.scroll-footer {
+  text-align: center;
+  margin-top: 50px;
+  font-size: 14px;
+  color: #999;
+}
+
+/* 5. 阅毕按钮 (印章风格) */
+.close-seal {
+  position: absolute;
+  bottom: 40px; right: 50px;
+  width: 80px; height: 80px;
+  border: 4px solid #b2955a; /* 印泥红/金色 */
+  color: #b2955a;
+  display: flex; justify-content: center; align-items: center;
+  font-size: 20px; font-weight: bold;
+  transform: rotate(-15deg);
+  cursor: pointer;
+  background: rgba(255,255,255,0.8);
+  box-shadow: 0 0 10px rgba(178, 149, 90, 0.2);
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+.close-seal:hover {
+  transform: rotate(-15deg) scale(1.1);
+  background: #b2955a; color: white;
+}
+
+
+
+
+/* =========================================
+   7. 底部专业分布幕布 (Curtain Overlay)
+   ========================================= */
+
+/* 容器：固定底部，利用 translateY 实现滑入滑出 */
+.majors-curtain-container {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 35vh; /* 占据屏幕下半部分约 1/3 */
+  
+  /* 磨砂质感 */
+  background: rgba(253, 250, 245, 0.85); /* 接近背景色的半透明 */
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  border-top: 1px solid rgba(0, 68, 138, 0.2);
+  box-shadow: 0 -10px 30px rgba(0, 68, 138, 0.05);
+  
+  z-index: 1500; /* 低于弹窗，高于场景 */
+  transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+  
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 30px; /* 给底部留点呼吸空间 */
+}
+
+/* 隐藏状态：向下位移 100% */
+.majors-curtain-container.closed {
+  transform: translateY(100%);
+}
+
+/* 顶部的小开关按钮 */
+.curtain-toggle-btn {
+  position: absolute;
+  top: -40px; /* 悬浮在幕布上方 */
+  left: 50%;
+  transform: translateX(-50%);
+  
+  background: #00448a; /* 天大蓝 */
+  color: #fff;
+  border: none;
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 20px 20px 0 0; /* 半圆顶 */
+  
+  font-family: 'Noto Serif SC', serif;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 -5px 15px rgba(0,0,0,0.1);
+  transition: all 0.3s;
+  
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1501;
+}
+
+.curtain-toggle-btn:hover {
+  background: #003366;
+  padding-bottom: 5px; /* Hover时稍微往上探头 */
+}
+
+/* 如果幕布关闭，按钮要跟下去吗？或者固定在底部？
+   这里设计为：无论开关，按钮都贴在 Curtain 的顶部边缘一起动
+   并在关闭时留出一截供点击。
+*/
+
+/* 图表区域布局 */
+.chart-body {
+  width: 100%;
+  height: 80%; /* 图表占据幕布主要空间 */
+  padding: 0 5%;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end; /* 柱状图从底部向上生长 */
+}
+
+/* 单个柱子组 */
+.chart-column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 5px;
+  position: relative;
+  /* Hover 效果：变亮 */
+  transition: opacity 0.3s;
+}
+
+.chart-column:hover {
+  opacity: 1 !important; /* 当前高亮 */
+}
+.chart-body:hover .chart-column:not(:hover) {
+  opacity: 0.5; /* 其他变暗 */
+}
+
+/* 柱体 (动态高度) */
+.chart-bar-fill {
+  width: 100%;
+  max-width: 40px; /* 柱子最大宽度 */
+  background: linear-gradient(to top, #00448a 0%, #4a8ad4 100%);
+  border-radius: 4px 4px 0 0;
+  
+  /* 高度变化过渡 */
+  transition: height 0.1s linear; /* 设为 linear 防止数据快速变化时卡顿 */
+  box-shadow: 0 4px 10px rgba(0, 68, 138, 0.3);
+  
+  position: relative;
+  min-height: 4px; /* 就算为0也留条线 */
+}
+
+/* 柱体顶部的数字 */
+.chart-val {
+  position: absolute;
+  top: -20px;
+  width: 100%;
+  text-align: center;
+  font-size: 12px;
+  color: #00448a;
+  font-weight: bold;
+}
+
+/* 底部的文字标签 */
+.chart-label {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #333;
+  text-align: center;
+  font-family: 'Noto Serif SC', serif;
+  height: 35px; /* 固定高度防止错位 */
+  line-height: 1.2;
+}
+
+/* =========================================
+   8. 大洋效果 (Ocean Containers) - 宽阔、不规则、大气的水面
+   ========================================= */
+
+/* =========================================
+   堤岸与交互区域 (River Bank & Interaction)
+   ========================================= */
+
+/* 让路段容器允许子元素延伸到外部 */
+/* === 容器：定位于道路两侧 === */
+.river-bank-container {
+  position: absolute;
+  top: 0; 
+  height: 1200px; /* 明确高度，跟随 Z_STEP */
+  display: flex;
+  align-items: center;
+  /* 确保层级正确 */
+  transform-style: preserve-3d;
+  z-index: 50; /* 确保在道路上方 */
+  /* 统一坐标系统：使用相同的 transform-origin */
+  transform-origin: 50% 50% 0;
+  /* 
+    关键：道路使用 left: 50% + margin-left: -500px 来居中
+    所以道路中心在 year-module-group 的 50% 位置
+    道路左边缘 = 50% - 500px，右边缘 = 50% + 500px
+  */
+}
+
+/* 左侧容器：在道路左边 */
+.left-side {
+  /* 使用与道路完全相同的定位方式：left: 50% + margin-left */
+  /* 道路：left: 50%, margin-left: -500px（道路中心在 50%） */
+  /* 道路左边缘 = 50% - 500px */
+  /* 堤岸右边缘要对齐道路左边缘，堤岸宽度 80px，所以堤岸中心在 50% - 500px - 40px */
+  left: 50%;
+  margin-left: calc(var(--road-width) / -2 - var(--bank-width) / 2);
+  /* 即：50% - 500px - 40px = 50% - 540px */
+  flex-direction: row; /* 触发区 - 堤岸 */
+  transform-origin: right center;
+}
+
+/* 右侧容器：在道路右边 */
+.right-side {
+  /* 使用与道路完全相同的定位方式：left: 50% + margin-left */
+  /* 道路右边缘 = 50% + 500px */
+  /* 堤岸左边缘要对齐道路右边缘，堤岸宽度 80px，所以堤岸中心在 50% + 500px + 40px */
+  left: 50%;
+  margin-left: calc(var(--road-width) / 2 + var(--bank-width) / 2);
+  /* 即：50% + 500px + 40px = 50% + 540px */
+  flex-direction: row-reverse; /* 堤岸 - 触发区 */
+  transform-origin: left center;
+}
+
+/* 左右堤岸使用相同的变换，但位置不同（由容器定位决定） */
+
+/* =========================================
+   水面浮岛效果 (Water Patch Float)
+   ========================================= */
+
+/* 浮岛：直接相对于 year-module-group 定位，与年份数字使用相同的 Z 轴基准 */
+/* 不再使用容器，直接定位 */
+
+/* --- 核心：漂浮的水面斑块 (The Lying-down Patch) --- */
+.water-patch-float {
+  position: absolute;
+  /* 完全照抄年份数字的设置 */
+  left: 50%;
+  margin-left: calc(var(--road-width) / -2); /* 与道路和年份数字使用完全相同的定位 */
+  width: var(--road-width); /* 与年份数字相同的宽度设置 */
+  /* 统一坐标系统：使用与所有元素相同的 transform-origin */
+  transform-origin: 50% 50% 0;
+  
+  /* 视觉样式：半透明光斑，像水上的睡莲叶子或光晕 */
+  background: radial-gradient(
+    circle at 30% 30%, 
+    rgba(255, 255, 255, 0.15), 
+    rgba(100, 200, 255, 0.05)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 0 20px rgba(0, 100, 255, 0.1), /* 外发光 */
+    inset 0 0 20px rgba(255, 255, 255, 0.05); /* 内发光增加质感 */
+    
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); /* 有弹性的过渡 */
+  
+  /* 文字内容布局 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.8);
+  
+  /* 防止旋转后文字看反了 */
+  backface-visibility: visible;
+  
+  /* 下沉到水面高度（rotateX 和 rotateZ 由内联样式控制） */
+  /* transform 由内联样式完全控制，这里只设置默认值 */
+  /* 注意：内联样式会覆盖这里的 transform，所以这里只作为后备 */
+}
+
+/* 交互状态：悬浮感 */
+.water-patch-float:hover {
+  background: radial-gradient(
+    circle at 30% 30%, 
+    rgba(255, 255, 255, 0.3), 
+    rgba(64, 169, 255, 0.2)
+  );
+  border-color: rgba(255, 255, 255, 0.4);
+  /* 悬停时微微浮起 */
+  filter: brightness(1.5) drop-shadow(0 0 10px rgba(100, 200, 255, 0.5));
+  /* transform 由内联样式控制，这里只调整其他属性 */
+  /* 注意：hover 时的 transform 变化需要通过 JS 动态更新，或者使用 CSS 变量 */
+}
+
+/* 内部内容修正 */
+.patch-content {
+  text-align: center;
+  /* 极其重要：因为父级躺平了，文字也躺平了。
+     如果希望文字像"立牌"一样立在浮岛上，需要反向旋转 */
+  transform: rotateX(-75deg);
+  
+  opacity: 0.6;
+  transition: opacity 0.3s, transform 0.3s;
+  pointer-events: none; /* 让点击事件穿透到父级 */
+}
+
+.water-patch-float:hover .patch-content {
+  opacity: 1;
+  transform: rotateX(-75deg) scale(1.1) translateZ(10px); /* 弹起来 */
+}
+
+.patch-icon {
+  font-size: 28px;
+  display: block;
+  margin-bottom: 5px;
+  filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.3)); /* 此时shadow也是躺平的，像投影在水上 */
+}
+
+.patch-text {
+  font-size: 14px;
+  font-family: 'Noto Serif SC', serif;
+  letter-spacing: 1px;
+  font-weight: 500;
+}
+
+/* 装饰波纹 */
+.ripple-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%) rotateX(-75deg);
+  pointer-events: none;
+  animation: ripple 3s ease-in-out infinite;
+}
+
+@keyframes ripple {
+  0%, 100% {
+    opacity: 0.3;
+    transform: translate(-50%, -50%) rotateX(-75deg) scale(0.8);
+  }
+  50% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) rotateX(-75deg) scale(1.2);
+  }
+}
+
+/* --- 连接处过渡：模拟岸边光影 (Bank Gradient) --- */
+.bank-gradient {
+  position: absolute;
+  top: -50px;
+  bottom: -50px;
+  width: 60px;
+  opacity: 0.4;
+  filter: blur(8px);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.left-side .bank-gradient {
+  right: -10px;
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.3), transparent);
+}
+
+.right-side .bank-gradient {
+  left: -10px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.3), transparent);
+}
+
+/* === 视觉层：顺畅的堤岸 (Stone Bank) === */
+.stone-bank {
+  width: var(--bank-width); /* 使用 CSS 变量，自动对齐 */
+  height: 1200px; /* 跟随道路高度 Z_STEP */
+  
+  /* 堤岸作为道路边缘的装饰条，和道路在同一平面但稍微高一点 */
+  /* 道路是 rotateX(90deg) translateZ(-300px)（躺平的） */
+  /* 堤岸也躺平，但 translateZ 稍微高一点，让它露出水面形成护坡效果 */
+  /* 统一坐标系统：使用与道路相同的 transform-origin */
+  transform-origin: 50% 50% 0;
+  transform: rotateX(90deg) translateZ(-270px);
+  /* -270px 比道路的 -300px 高 30px，让堤岸露出水面形成护坡 */
+  
+  /* 深灰色渐变，模拟混凝土/石质堤岸 */
+  background: linear-gradient(
+    to bottom, 
+    #5a5a5a 0%, 
+    #4a4a4a 15%,
+    #3e3e3e 35%,
+    #333333 65%,
+    #2a2a2a 85%,
+    #1f1f1f 100%
+  );
+  
+  /* 给它加点纹理噪点或阴影，模拟混凝土/石块 */
+  box-shadow: 
+    inset 0 0 25px rgba(0,0,0,0.8),
+    inset -5px 0 15px rgba(0,0,0,0.6),
+    5px 0 20px rgba(0,0,0,0.4),
+    0 0 40px rgba(0,0,0,0.3);
+  
+  border-left: 3px solid rgba(255,255,255,0.2);
+  border-right: 3px solid rgba(0,0,0,0.8);
+  border-top: 2px solid rgba(255,255,255,0.2);
+  border-bottom: 2px solid rgba(0,0,0,0.6);
+  
+  /* 关键：使用 z-index 遮挡一点点水面连接处 */
+  z-index: 100; /* 大幅提高层级，确保在最上层 */
+  position: relative;
+  
+  /* 添加一些纹理效果，模拟混凝土质感 */
+  background-image: 
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 4px,
+      rgba(0,0,0,0.15) 4px,
+      rgba(0,0,0,0.15) 8px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 20px,
+      rgba(255,255,255,0.05) 20px,
+      rgba(255,255,255,0.05) 21px
+    );
+  
+  /* 确保可见性 */
+  opacity: 1;
+  visibility: visible;
+}
+
+/* === 交互层：隐形的大海触发器 (Ocean Trigger) === */
+.ocean-trigger {
+  width: 800px; /* 极其宽大，覆盖屏幕两侧剩余空间 */
+  height: 300%; /* 上下延伸一点，防止滚太快点不到 */
+  
+  /* 透明度设为 0，让下面的 3D 水面露出来！ */
+  background: rgba(0, 255, 0, 0); 
+  
+  cursor: pointer;
+  position: relative;
+  z-index: 10; /* 必须最高，确保能被点到 */
+  transition: background 0.3s ease;
+  
+  /* 注意：不添加 transform，保持平面覆盖，让点击区域更准确 */
+}
+
+/* 交互反馈：悬停时，水面微微亮起提示这是一块可点区域 */
+.ocean-trigger:hover {
+  /* 使用半透明白色渐变，模拟"高亮该区域水面" */
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0) 100%
+  );
+}
+
+/* === 文字提示：悬停浮现 === */
+.trigger-label {
+  position: absolute;
+  top: 50%;
+  width: 200px;
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  font-size: 18px;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.8);
+  
+  opacity: 0; /* 默认隐藏 */
+  transform: translateY(20px);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+/* 根据左右位置微调文字位置 */
+.left-side .trigger-label { 
+  right: 20px; 
+  text-align: right; 
+}
+
+.right-side .trigger-label { 
+  left: 20px; 
+  text-align: left; 
+}
+
+/* 悬停时文字浮起 */
+.ocean-trigger:hover .trigger-label {
+  opacity: 1;
+  transform: translateY(-50%);
+}
+
+.trigger-label .icon {
+  display: block;
+  font-size: 24px;
+  margin-bottom: 5px;
+  line-height: 1;
+}
+
+.trigger-label .label-text {
+  font-size: 1.2em;
+  font-family: "Songti SC", "SimSun", serif;
+  letter-spacing: 2px;
+  font-weight: bold;
+}

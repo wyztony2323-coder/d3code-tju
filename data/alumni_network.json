@@ -1,0 +1,23 @@
+{
+    "nodes": [
+      { "id": "TJU", "group": 0, "radius": 20 },
+      { "id": "盛宣怀", "group": 1, "role": "创始人" },
+      { "id": "赵天麟", "group": 1, "role": "校长" },
+      { "id": "茅以升", "group": 1, "role": "校长/校友" },
+      { "id": "马寅初", "group": 2, "role": "校友/经济学家" },
+      { "id": "师昌绪", "group": 2, "role": "校友/院士" },
+      { "id": "王宠惠", "group": 2, "role": "第一号文凭" },
+      { "id": "徐志摩", "group": 3, "role": "肄业校友" }
+    ],
+    "links": [
+      { "source": "TJU", "target": "盛宣怀", "value": 10 },
+      { "source": "TJU", "target": "赵天麟", "value": 8 },
+      { "source": "TJU", "target": "茅以升", "value": 8 },
+      { "source": "TJU", "target": "马寅初", "value": 5 },
+      { "source": "TJU", "target": "师昌绪", "value": 5 },
+      { "source": "TJU", "target": "王宠惠", "value": 5 },
+      { "source": "TJU", "target": "徐志摩", "value": 2 },
+      { "source": "赵天麟", "target": "茅以升", "value": 3, "desc": "精神传承" },
+      { "source": "盛宣怀", "target": "王宠惠", "value": 3, "desc": "颁发文凭" }
+    ]
+  }

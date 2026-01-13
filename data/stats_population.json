@@ -1,0 +1,68 @@
+[
+    {
+      "year": 1895,
+      "total_students": 30,
+      "faculty": 12,
+      "note": "创办初期，律例、工程、矿务、机器四学门"
+    },
+    {
+      "year": 1910,
+      "total_students": 150,
+      "faculty": 40,
+      "note": "由督办改为校长制"
+    },
+    {
+      "year": 1930,
+      "total_students": 400,
+      "faculty": 80,
+      "note": "茅以升任校长时期"
+    },
+    {
+      "year": 1937,
+      "total_students": 550,
+      "faculty": 100,
+      "note": "抗战前夕高峰"
+    },
+    {
+      "year": 1946,
+      "total_students": 1200,
+      "faculty": 250,
+      "note": "复员回津，扩招"
+    },
+    {
+      "year": 1952,
+      "total_students": 3500,
+      "faculty": 500,
+      "note": "院系调整，合并多校工科"
+    },
+    {
+      "year": 1965,
+      "total_students": 6000,
+      "faculty": 1200,
+      "note": "文革前夕"
+    },
+    {
+      "year": 1980,
+      "total_students": 8500,
+      "faculty": 2100,
+      "note": "改革开放恢复高考后"
+    },
+    {
+      "year": 1995,
+      "total_students": 16000,
+      "faculty": 3000,
+      "note": "百年校庆"
+    },
+    {
+      "year": 2010,
+      "total_students": 28000,
+      "faculty": 4500,
+      "note": "新校区建设前夕"
+    },
+    {
+      "year": 2024,
+      "total_students": 39000,
+      "faculty": 5400,
+      "note": "双一流建设时期"
+    }
+  ]

@@ -1,0 +1,45 @@
+{
+    "name": "天津大学学科体系",
+    "children": [
+      {
+        "name": "工程学部",
+        "children": [
+          { "name": "机械工程学院", "value": 100 },
+          { "name": "建工学院", "value": 90 },
+          { "name": "化工学院", "value": 110 },
+          { "name": "材料学院", "value": 80 }
+        ]
+      },
+      {
+        "name": "信息学部",
+        "children": [
+          { "name": "智能与计算学部", "value": 120 },
+          { "name": "精仪学院", "value": 85 },
+          { "name": "微电子学院", "value": 60 }
+        ]
+      },
+      {
+        "name": "理学部",
+        "children": [
+          { "name": "理学院", "value": 50 },
+          { "name": "数学学院", "value": 45 }
+        ]
+      },
+      {
+        "name": "人文社科学部",
+        "children": [
+          { "name": "经管学部", "value": 70 },
+          { "name": "法学院", "value": 30 },
+          { "name": "新媒体学院", "value": 30 },
+          { "name": "冯骥才研究院", "value": 20 }
+        ]
+      },
+      {
+        "name": "医学部",
+        "children": [
+          { "name": "医学科学与工程", "value": 40 },
+          { "name": "药学院", "value": 35 }
+        ]
+      }
+    ]
+  }

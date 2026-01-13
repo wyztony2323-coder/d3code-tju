@@ -1,0 +1,329 @@
+[
+    {
+      "year": 1895,
+      "date": "1895-10-02",
+      "title": "北洋大学堂成立",
+      "content": "光绪皇帝御笔钦准，盛宣怀创办北洋大学堂，为中国第一所现代大学。首开\"兴学救国\"之风。",
+      "category": "FOUNDATION",
+      "category_cn": "建校与制度变迁",
+      "geo": { "lat": 39.1, "lng": 117.2, "name": "博文书院旧址" }
+    },
+    {
+      "year": 1895,
+      "title": "首设工程学科",
+      "content": "创办之初设立律例、工程、矿务、机器四大学门，确立了以工科为主的办学特色，引入美国哈佛、耶鲁教学模式。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 1896,
+      "title": "盛宣怀任督办",
+      "content": "盛宣怀作为创始人，担任首任督办（校长），确立了\"西学为体\"的办学方针。",
+      "category": "PEOPLE",
+      "category_cn": "人物与群体"
+    },
+    {
+      "year": 1899,
+      "title": "钦字第一号文凭",
+      "content": "第一届学员毕业，颁发中国第一张大学文凭（钦字第一号），获得者为王宠惠（后任外交部长）。",
+      "category": "HONORS",
+      "category_cn": "荣誉与里程碑"
+    },
+    {
+      "year": 1900,
+      "title": "庚子国难与停办",
+      "content": "八国联军攻占天津，北洋大学堂校舍被德军强占为兵营，学校被迫停办，设备图籍损失殆尽。",
+      "category": "HISTORY",
+      "category_cn": "重大历史事件",
+      "geo": { "lat": 39.1, "lng": 117.2, "name": "博文书院" }
+    },
+    {
+      "year": 1903,
+      "title": "西沽复校",
+      "content": "北洋大学堂在天津西沽武库旧址复校，正式复课。西沽校区红楼群成为老北洋人的集体记忆。",
+      "category": "CAMPUS",
+      "category_cn": "校园与空间变迁",
+      "geo": { "lat": 39.16, "lng": 117.15, "name": "西沽旧址" }
+    },
+    {
+      "year": 1913,
+      "title": "更名国立北洋大学",
+      "content": "教育部令改称\"国立北洋大学\"，督办一职改称校长。此时期学校享有\"东方康奈尔\"之美誉。",
+      "category": "FOUNDATION",
+      "category_cn": "建校与制度变迁"
+    },
+    {
+      "year": 1914,
+      "title": "赵天麟倡导校训",
+      "content": "校长赵天麟总结北洋校风，确立\"实事求是\"为校训，要求学生不尚空谈，脚踏实地。",
+      "category": "FOUNDATION",
+      "category_cn": "建校与制度变迁"
+    },
+    {
+      "year": 1915,
+      "title": "法科并入北大",
+      "content": "教育部决定调整全国高校学科，北洋大学法科并入北京大学，自此专注于工科发展。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 1919,
+      "title": "五四运动",
+      "content": "五四运动爆发，北洋大学学生积极响应，组织罢课游行，声援北京学生。",
+      "category": "HISTORY",
+      "category_cn": "重大历史事件"
+    },
+    {
+      "year": 1920,
+      "title": "马寅初任教",
+      "content": "著名经济学家马寅初等到校任教，提升了学校的学术声誉。",
+      "category": "PEOPLE",
+      "category_cn": "人物与群体"
+    },
+    {
+      "year": 1929,
+      "title": "主楼火灾与重建",
+      "content": "西沽校区主楼遭遇火灾，大量珍贵资料焚毁。随后茅以升主持重建南楼、北楼。",
+      "category": "CAMPUS",
+      "category_cn": "校园与空间变迁",
+      "geo": { "lat": 39.16, "lng": 117.15, "name": "西沽旧址" }
+    },
+    {
+      "year": 1933,
+      "title": "成立工程研究所",
+      "content": "成立工程研究所，开始招收研究生，标志着高层次科研体系的初步建立。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 1937,
+      "title": "烽火西迁",
+      "content": "七七事变爆发，天津沦陷。学校被迫西迁入陕，与北平大学、北平师范大学组建西安临时大学。",
+      "category": "HISTORY",
+      "category_cn": "重大历史事件",
+      "geo": { "lat": 34.27, "lng": 108.93, "name": "西安" }
+    },
+    {
+      "year": 1938,
+      "title": "西北联合大学",
+      "content": "西安临大迁往汉中，改称国立西北联合大学。后工学院独立为国立西北工学院，在城固古路坝办学。",
+      "category": "CAMPUS",
+      "category_cn": "校园与空间变迁",
+      "geo": { "lat": 33.07, "lng": 107.02, "name": "汉中城固" }
+    },
+    {
+      "year": 1941,
+      "title": "李书田治校",
+      "content": "李书田任西北工学院院长，坚持严谨治学，保留了北洋大学的火种。",
+      "category": "PEOPLE",
+      "category_cn": "人物与群体"
+    },
+    {
+      "year": 1946,
+      "title": "复员回津",
+      "content": "抗战胜利后，国立北洋大学在天津西沽原址复员开学，茅以升任校长。",
+      "category": "CAMPUS",
+      "category_cn": "校园与空间变迁",
+      "geo": { "lat": 39.16, "lng": 117.15, "name": "西沽旧址" }
+    },
+    {
+      "year": 1949,
+      "title": "天津解放",
+      "content": "天津解放，学校被人民政府接管，进入新的历史发展时期。",
+      "category": "HISTORY",
+      "category_cn": "重大历史事件"
+    },
+    {
+      "year": 1951,
+      "date": "1951-09-22",
+      "title": "定名天津大学",
+      "content": "经中央人民政府批准，北洋大学与河北工学院合并，定名为天津大学。",
+      "category": "FOUNDATION",
+      "category_cn": "建校与制度变迁"
+    },
+    {
+      "year": 1952,
+      "title": "院系大调整",
+      "content": "全国高校院系调整。南开大学工学院并入天大；天大抽调数学、物理、航空等系组建清华、北航、地质学院。天大确立多科性工业大学地位。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 1958,
+      "title": "迁往七里台",
+      "content": "学校主体从西沽搬迁至南开区七里台（现卫津路校区），第九教学楼等标志性建筑落成。",
+      "category": "CAMPUS",
+      "category_cn": "校园与空间变迁",
+      "geo": { "lat": 39.11, "lng": 117.17, "name": "卫津路校区" }
+    },
+    {
+      "year": 1959,
+      "title": "首批16所重点大学",
+      "content": "中共中央发出《关于在高等学校中指定一批重点学校的决定》，天津大学被列为首批16所国家重点大学之一。",
+      "category": "HONORS",
+      "category_cn": "荣誉与里程碑"
+    },
+    {
+      "year": 1966,
+      "title": "文革停课",
+      "content": "文化大革命开始，学校教学科研工作受到严重冲击，停止招生数年。",
+      "category": "HISTORY",
+      "category_cn": "重大历史事件"
+    },
+    {
+      "year": 1978,
+      "title": "恢复高考与科研",
+      "content": "恢复高考招生，学校重新确立为教育部直属重点大学，科研工作全面复苏。",
+      "category": "HISTORY",
+      "category_cn": "重大历史事件"
+    },
+    {
+      "year": 1981,
+      "title": "首批博士学位授予权",
+      "content": "国务院批准天津大学为全国首批博士学位授予单位。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 1984,
+      "title": "试办研究生院",
+      "content": "成为全国首批试办研究生院的22所高校之一，研究生教育进入快车道。",
+      "category": "FOUNDATION",
+      "category_cn": "建校与制度变迁"
+    },
+    {
+      "year": 1986,
+      "title": "史绍熙当选院士",
+      "content": "史绍熙校长（内燃机专家）当选中国科学院学部委员（院士），引领学科发展。",
+      "category": "PEOPLE",
+      "category_cn": "人物与群体"
+    },
+    {
+      "year": 1995,
+      "title": "百年校庆",
+      "content": "隆重庆祝建校100周年，江泽民题词\"弘扬北洋大学实事求是校风\"。",
+      "category": "HONORS",
+      "category_cn": "荣誉与里程碑"
+    },
+    {
+      "year": 1997,
+      "title": "211工程",
+      "content": "首批入选国家\"211工程\"重点建设高校。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 2000,
+      "title": "部市共建",
+      "content": "管理体制调整，成为教育部直属、教育部与天津市共建高校。入选\"985工程\"。",
+      "category": "FOUNDATION",
+      "category_cn": "建校与制度变迁"
+    },
+    {
+      "year": 2003,
+      "title": "抗击非典",
+      "content": "非典疫情期间，学校实施封闭管理，确保了师生安全和教学秩序。",
+      "category": "HISTORY",
+      "category_cn": "重大历史事件"
+    },
+    {
+      "year": 2006,
+      "title": "冯骥才研究院成立",
+      "content": "冯骥才文学艺术研究院落成，为人文艺术学科发展注入新活力。",
+      "category": "CAMPUS",
+      "category_cn": "校园与空间变迁"
+    },
+    {
+      "year": 2009,
+      "title": "国家级教学成果奖",
+      "content": "获得多项国家级教学成果一等奖，确立了\"工程教育\"的领先地位。",
+      "category": "HONORS",
+      "category_cn": "荣誉与里程碑"
+    },
+    {
+      "year": 2010,
+      "title": "新校区奠基",
+      "content": "教育部和天津市签署协议，天津大学新校区（北洋园校区）在海河教育园区奠基。",
+      "category": "CAMPUS",
+      "category_cn": "校园与空间变迁",
+      "geo": { "lat": 39.00, "lng": 117.30, "name": "北洋园校区" }
+    },
+    {
+      "year": 2011,
+      "title": "2011计划",
+      "content": "成为首批\"2011计划\"（高等学校创新能力提升计划）牵头高校。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 2014,
+      "title": "《天津大学章程》",
+      "content": "教育部核准《天津大学章程》，依法治校迈出关键一步。",
+      "category": "FOUNDATION",
+      "category_cn": "建校与制度变迁"
+    },
+    {
+      "year": 2015,
+      "title": "双校区运行与120周年",
+      "content": "北洋园校区正式启用，绝大多数本科生搬迁。同年庆祝建校120周年。",
+      "category": "CAMPUS",
+      "category_cn": "校园与空间变迁",
+      "geo": { "lat": 39.00, "lng": 117.30, "name": "北洋园校区" }
+    },
+    {
+      "year": 2016,
+      "title": "佐治亚理工深圳学院",
+      "content": "与佐治亚理工学院合作办学，拓展国际化办学空间。",
+      "category": "FOUNDATION",
+      "category_cn": "建校与制度变迁"
+    },
+    {
+      "year": 2017,
+      "title": "双一流建设",
+      "content": "入选国家\"双一流\"建设高校名单，化学工程与技术等学科入选一流学科。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 2018,
+      "title": "新工科建设",
+      "content": "天津大学发布\"天大行动\"，成为全国\"新工科\"建设的领头羊。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 2019,
+      "title": "国家科技进步特等奖",
+      "content": "参与的重大工程项目获得国家科技进步特等奖，彰显科研实力。",
+      "category": "HONORS",
+      "category_cn": "荣誉与里程碑"
+    },
+    {
+      "year": 2020,
+      "title": "抗击新冠疫情",
+      "content": "面对全球新冠疫情，全面开展线上教学，科研团队攻关病毒检测技术。",
+      "category": "HISTORY",
+      "category_cn": "重大历史事件"
+    },
+    {
+      "year": 2021,
+      "title": "杨贤金任书记",
+      "content": "校领导班子调整，继续推进双一流大学建设。",
+      "category": "PEOPLE",
+      "category_cn": "人物与群体"
+    },
+    {
+      "year": 2023,
+      "title": "非遗学科建设",
+      "content": "全国首个非物质文化遗产学交叉学科硕士点在天大设立。",
+      "category": "DISCIPLINES",
+      "category_cn": "学科建设与学术发展"
+    },
+    {
+      "year": 2024,
+      "title": "天开园建设",
+      "content": "深度参与天开高教科创园建设，推动科技成果转化。",
+      "category": "FOUNDATION",
+      "category_cn": "建校与制度变迁"
+    }
+  ]
